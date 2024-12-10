@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 # HTML and JavaScript code for accessing the webcam
 html_code = """
@@ -26,5 +27,5 @@ html_code = """
     </html>
 """
 
-# Display the HTML and JavaScript in Streamlit
-st.markdown(html_code, unsafe_allow_html=True)
+# Embed the HTML code using Streamlit's component API
+components.html(html_code, height=500)
