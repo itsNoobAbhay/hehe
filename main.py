@@ -1,25 +1,45 @@
-import streamlit as st
-import numpy as np
 import cv2
-from streamlit_webrtc import webrtc_streamer, WebRtcMode, VideoTransformerBase
+import numpy as np
+import streamlit as st
 
-# Create a class to handle video frame transformations
-class VideoTransformer(VideoTransformerBase):
-    def transform(self, frame):
-        # Convert the frame to an OpenCV image (BGR format)
-        img = frame.to_ndarray(format="bgr24")
+# Set up the Streamlit page
+st.title("Live Camera Feed with OpenCV")
 
-        # Draw a rectangle on the image (you can adjust the coordinates and size)
-        start_point = (100, 100)  # top-left corner
-        end_point = (300, 300)    # bottom-right corner
-        color = (255, 0, 0)       # Rectangle color (Blue)
-        thickness = 5             # Thickness of the rectangle
-        img = cv2.rectangle(img, start_point, end_point, color, thickness)
+# Open the webcam (0 is the default webcam)
+cap = cv2.VideoCapture(0)
 
-        return img
+# Check if the camera opened successfully
+if not cap.isOpened():
+    st.error("Could not open webcam.")
+else:
+    st.info("Press 'q' to quit.")
 
-# Streamlit UI
-st.title("Live Camera with Rectangle Overlay")
+    # Loop to continuously get frames from the webcam
+    while True:
+        ret, frame = cap.read()
+        
+        if not ret:
+            st.error("Failed to capture image.")
+            break
+        
+        # Optional: Draw a rectangle or any other shape on the frame
+        # Rectangle coordinates (x, y, width, height)
+        start_point = (100, 100)
+        end_point = (300, 300)
+        color = (0, 255, 0)  # Green rectangle
+        thickness = 2
+        cv2.rectangle(frame, start_point, end_point, color, thickness)
 
-# Start the WebRTC stream and apply the transformation
-webrtc_streamer(key="example", mode=WebRtcMode.SENDRECV, video_transformer_factory=VideoTransformer)
+        # Convert the frame to RGB (OpenCV uses BGR by default)
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        # Display the image in Streamlit
+        st.image(frame_rgb, channels="RGB", use_column_width=True)
+
+        # Close the camera feed if 'q' is pressed (optional)
+        key = cv2.waitKey(1)
+        if key == ord('q'):
+            break
+
+    # Release the camera when done
+    cap.release()
