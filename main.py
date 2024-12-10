@@ -1,16 +1,19 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# HTML and JavaScript code to access webcam, resize it, and draw a rectangle on it
+# HTML and JavaScript code to access the webcam, draw a rectangle, and display it
 html_code = """
     <html>
         <body>
             <h2>Live Camera Feed with Rectangle (416x416)</h2>
-            <video id="myVidPlayer" controls muted autoplay width="416" height="416"></video>
-            <canvas id="myCanvas" width="416" height="416" style="position:absolute; top: 0; left: 0;"></canvas>
+            <!-- Camera feed with 416x416 dimensions -->
+            <div style="position:relative; width:416px; height:416px;">
+                <video id="myVidPlayer" controls muted autoplay width="416" height="416" style="position: absolute;"></video>
+                <canvas id="myCanvas" width="416" height="416" style="position: absolute; top: 0; left: 0;"></canvas>
+            </div>
             
             <script type="text/javascript">
-                // Selector for your <video> element and <canvas> element
+                // Selector for video and canvas elements
                 const video = document.querySelector('#myVidPlayer');
                 const canvas = document.querySelector('#myCanvas');
                 const ctx = canvas.getContext('2d');
@@ -41,12 +44,12 @@ html_code = """
                         });
                 });
 
-                // Draw a rectangle on the canvas over the video
+                // Function to draw the rectangle within the 416x416 camera window
                 function drawRectangle() {
                     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous frames
                     ctx.strokeStyle = 'red'; // Set rectangle color
                     ctx.lineWidth = 4; // Set rectangle border width
-                    ctx.strokeRect(50, 50, 200, 150); // Draw a rectangle at (50,50) with width=200 and height=150
+                    ctx.strokeRect(50, 50, 200, 150); // Draw a rectangle at (50, 50) with width=200 and height=150
                 }
 
                 // Draw the rectangle continuously, synchronizing with video frame rate
