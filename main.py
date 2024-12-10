@@ -7,7 +7,7 @@ html_code = """
         <body>
             <h2>Live Camera Feed with Rectangle (416x416)</h2>
             <video id="myVidPlayer" controls muted autoplay width="416" height="416"></video>
-            <canvas id="myCanvas" width="416" height="416"></canvas>
+            <canvas id="myCanvas" width="416" height="416" style="position:absolute; top: 0; left: 0;"></canvas>
             
             <script type="text/javascript">
                 // Selector for your <video> element and <canvas> element
@@ -49,8 +49,16 @@ html_code = """
                     ctx.strokeRect(50, 50, 200, 150); // Draw a rectangle at (50,50) with width=200 and height=150
                 }
 
-                // Call drawRectangle every 100ms to keep it drawing while video is playing
-                setInterval(drawRectangle, 100);
+                // Draw the rectangle continuously, synchronizing with video frame rate
+                video.addEventListener('play', function() {
+                    function update() {
+                        if (!video.paused && !video.ended) {
+                            drawRectangle();
+                            requestAnimationFrame(update); // Call update for the next frame
+                        }
+                    }
+                    update();
+                });
             </script>
         </body>
     </html>
